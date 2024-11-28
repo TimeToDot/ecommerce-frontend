@@ -4,18 +4,19 @@ import { CommonModule } from '@angular/common';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomePageComponent } from './home-page/home-page.component';
 import { SliderComponent } from './slider/slider.component';
-import { BrowserModule } from '@angular/platform-browser';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [
+    HomePageComponent,
     SliderComponent
   ], 
   imports: [
     CommonModule,
-    HomeRoutingModule,
-    BrowserModule,
-    HomePageComponent
+    RouterModule,
+    HomeRoutingModule
   ],
+  exports: [HomePageComponent, SliderComponent],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class HomeModule { }

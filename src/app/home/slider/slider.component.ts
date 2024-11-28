@@ -31,15 +31,30 @@ export class SliderComponent {
     },
     // Możesz dodać więcej slajdów
   ];
-
   currentSlide = 0;
 
-  // Przełączanie slajdów
-  nextSlide() {
-    this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+ prevSlide() {
+    const previousSlide = this.currentSlide;
+    this.currentSlide = (this.currentSlide - 1 + this.slides.length) % this.slides.length;
+
+    this.updateSlideClasses(previousSlide, this.currentSlide);
   }
 
-  prevSlide() {
-    this.currentSlide = (this.currentSlide - 1 + this.slides.length) % this.slides.length;
+  nextSlide() {
+    const previousSlide = this.currentSlide;
+    this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+
+    this.updateSlideClasses(previousSlide, this.currentSlide);
+  }
+
+  updateSlideClasses(previousSlide: number, currentSlide: number) {
+    const slides = document.querySelectorAll('.slide');
+
+    if (slides[previousSlide]) {
+      slides[previousSlide].classList.remove('active');
+    }
+    if (slides[currentSlide]) {
+      slides[currentSlide].classList.add('active');
+    }
   }
 }
