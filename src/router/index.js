@@ -1,21 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import ProductList from '@/components/ProductList.vue'
-import ProductDetail from '@/components/ProductDetail.vue'
-import Blog from '@/components/Blog.vue'
-import About from '@/components/About.vue'
-import Contact from '@/components/Contact.vue'
-import Auth from '@/components/Auth.vue'
-import Cart from '@/components/Cart.vue'
+import Home from '@/views/Home.vue'
+import Shop from '@/views/Shop.vue'
+import Blog from '@/views/Blog.vue'
+import About from '@/views/About.vue'
+import Contact from '@/views/Contact.vue'
+import Cart from '@/views/Cart.vue'
+import ProductDetail from '@/views/ProductDetail.vue'
+import Auth from '@/views/Auth.vue'
 
 const routes = [
-  { path: '/', component: ProductList },
-  { path: '/shop', component: ProductList },
-  { path: '/product/:id', component: ProductDetail },
+  { path: '/', component: Home },
+  { path: '/shop', component: Shop },
   { path: '/blog', component: Blog },
   { path: '/about', component: About },
   { path: '/contact', component: Contact },
-  { path: '/auth', component: Auth },
-  { path: '/cart', component: Cart }
+  { path: '/cart', component: Cart },
+  { path: '/product/:id', component: ProductDetail },
+  { path: '/auth', component: Auth }
 ]
 
-export default createRouter({ history: createWebHistory(), routes })
+export default createRouter({
+  history: createWebHistory(),
+  routes
+})
