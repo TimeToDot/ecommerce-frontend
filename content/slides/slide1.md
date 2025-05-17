@@ -1,5 +1,5 @@
 ---
 title: "Slide 1"
-image: "/images/slide1.png"
+image: "/images/gemini_slide.jpg"
 link: "/blog/first-post"
 ---

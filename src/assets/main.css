@@ -1,0 +1,7 @@
+.aspect-w-4 {
+  padding-bottom: calc(100% * 3 / 4);
+  height: 0;
+}
+.aspect-h-3 {
+  height: auto;
+}

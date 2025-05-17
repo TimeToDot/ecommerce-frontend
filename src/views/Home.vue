@@ -1,98 +1,149 @@
-<!-- Updated Home.vue layout with fixed slider, categories and product loading -->
 <template>
   <div class="min-h-screen bg-[#fdfaf4] text-gray-800 scroll-smooth">
-    <!-- Header -->
-    <header class="flex flex-col md:flex-row md:justify-between md:items-center p-4 md:p-6 shadow-md bg-[#f7f5ec] sticky top-0 z-50">
-      <h1 class="text-2xl font-bold text-olive-800 mb-2 md:mb-0">Fanaberia</h1>
-      <nav class="flex flex-wrap justify-center md:justify-end gap-6 text-sm">
-        <a href="#shop" class="hover:underline">Shop</a>
-        <router-link to="/blog" class="hover:underline">Blog</router-link>
-        <a href="#about" class="hover:underline">About</a>
-        <span class="hidden md:inline border-l h-5 border-gray-300"></span>
-        <a href="#cart" class="hover:underline">Cart</a>
-      </nav>
+    <header
+      class="bg-[#f7f5ec] shadow-md sticky top-0 z-50 transition-all duration-300"
+      :style="{ backgroundColor: headerBgColor }"
+    >
+      <div
+        class="container mx-auto px-4 md:px-6 py-4 md:py-6 flex justify-content-between items-center flex-col md:flex-row"
+        :style="{ opacity: headerOpacity }"
+      >
+        <h1 class="text-2xl font-bold text-olive-800 mb-2 md:mb-0">Fanaberia</h1>
+        <nav class="flex flex-wrap justify-center md:justify-end gap-6 text-sm">
+          <router-link to="/blog" class="hover:underline">Blog</router-link>
+          <a href="#about" class="hover:underline">O nas</a>
+          <span class="hidden md:inline border-l h-5 border-gray-300"></span>
+          <a href="#cart" class="hover:underline">Koszyk</a>
+        </nav>
+      </div>
     </header>
 
-    <!-- Hero Slider -->
-    <section class="relative w-full h-[80vh] overflow-hidden bg-gray-100" id="top" @mouseenter="hovering = true" @mouseleave="hovering = false">
+    <section
+      class="relative w-full h-[80vh] overflow-hidden bg-gray-100"
+      id="top"
+      @mouseenter="hovering = true"
+      @mouseleave="hovering = false"
+    >
       <transition name="fade">
         <div
           v-if="currentSlide && currentSlide.image"
           class="absolute inset-0 bg-cover bg-center w-full h-full"
-          :style="{ backgroundImage: `url(${currentSlide.image || '/images/default.jpg'})` }"
+          :style="{
+            backgroundImage: `url(${
+              currentSlide.image || '/images/default-slide.jpg'
+            })`,
+          }"
           @click="goTo(currentSlide.link)"
         ></div>
       </transition>
-      <button @click="prevSlide" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/60 rounded-full p-2">←</button>
-      <button @click="nextSlide" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/60 rounded-full p-2">→</button>
+      <button
+        @click="prevSlide"
+        class="absolute left-0 top-0 bottom-0 text-white opacity-20 hover:opacity-70 transition-opacity z-10 flex items-center justify-start pl-4 md:pl-8"
+      >
+        <span class="text-2xl">←</span>
+      </button>
+      <button
+        @click="nextSlide"
+        class="absolute right-0 top-0 bottom-0 text-white opacity-20 hover:opacity-70 transition-opacity z-10 flex items-center justify-end pr-4 md:pr-8"
+      >
+        <span class="text-2xl">→</span>
+      </button>
     </section>
 
-    <!-- Categories -->
     <section class="py-12 bg-[#faf9f5]" id="categories">
-      <h2 class="text-2xl font-bold text-center mb-8">Our categories for you</h2>
-      <div class="flex flex-wrap justify-center gap-6">
-        <div v-for="cat in categories" :key="cat.name" class="flex flex-col items-center text-center">
-          <img
-            :src="cat.image || '/images/default.jpg'"
-            class="w-24 h-24 rounded-full object-cover mb-2 shadow"
-            loading="lazy"
-           alt="category"/>
-          <p class="text-sm font-medium">{{ cat.name }}</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Promo Banners -->
-    <section class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-6xl mx-auto px-4 mb-12">
-      <div v-for="(banner, i) in promos" :key="i" class="cursor-pointer rounded overflow-hidden">
-        <img :src="banner.image || '/images/default.jpg'" class="w-full h-64 object-cover hover:opacity-90 transition" @click="goTo(banner.link)"  alt="banner"/>
-      </div>
-    </section>
-
-    <!-- Shop Section -->
-    <section id="shop" class="max-w-6xl mx-auto px-4">
-      <h2 class="text-xl font-semibold mb-4">Shop</h2>
-      <div class="flex gap-6">
-        <aside class="w-48 shrink-0">
-          <h3 class="font-semibold mb-2">Filter by Category</h3>
-          <ul class="space-y-2">
-            <li v-for="cat in uniqueCategories" :key="cat">
-              <button @click="selectCategory(cat)" :class="[selectedCategory === cat ? 'text-blue-600 font-bold' : 'text-gray-700']">
-                {{ cat }}
-              </button>
-            </li>
-          </ul>
-        </aside>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 flex-1">
+      <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-bold text-center mb-8">
+          Nasze kategorie dla Ciebie
+        </h2>
+        <div class="flex flex-wrap justify-center gap-6">
           <div
-            v-for="product in paginatedProducts"
-            :key="product.id"
-            class="border p-4 rounded shadow hover:shadow-md cursor-pointer"
-            @click="$router.push(`/product/${product.id}`)"
+            v-for="cat in categories"
+            :key="cat.name"
+            class="flex flex-col items-center text-center category-item"
           >
-            <img :src="product.image || '/images/default.jpg'" class="w-full h-40 object-cover rounded mb-2" />
-            <h2 class="font-semibold">{{ product.title }}</h2>
-            <p class="text-sm text-gray-600">{{ product.price }}</p>
+            <div class="w-24 h-24 rounded-full overflow-hidden shadow">
+              <img
+                :src="cat.image || '/images/default-category.jpg'"
+                class="w-full h-full object-cover"
+                loading="lazy"
+                alt="category"
+              />
+            </div>
+            <p class="text-sm font-medium mt-2">{{ cat.name }}</p>
           </div>
         </div>
       </div>
-      <div class="text-center mt-8">
-        <button
-          v-if="canLoadMore"
-          @click="page++"
-          class="bg-olive-800 text-white px-4 py-2 rounded shadow hover:bg-olive-700"
-        >
-          Load More
-        </button>
+    </section>
+
+    <section class="py-12 bg-[#fdfaf4]">
+      <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-bold text-center mb-8">Polecamy</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 recommended-products-grid">
+          <div
+            v-for="(promo, i) in promos"
+            :key="i"
+            class="rounded-lg overflow-hidden shadow-md cursor-pointer"
+            @click="goTo(promo.link)"
+          >
+            <img
+              :src="promo.image || '/images/default-promo.jpg'"
+              class="w-full h-64 object-cover transition-opacity duration-300 hover:opacity-90 recommended-product-image"
+              alt="recommended product"
+            />
+            <div class="p-4 bg-white">
+              <h3 class="font-semibold text-lg">{{ promo.title }}</h3>
+              <p class="text-gray-600 text-sm mt-1">
+                {{ promo.description }}
+              </p>
+              <button
+                v-if="promo.link"
+                class="bg-olive-800 text-white px-4 py-2 rounded-full mt-2 hover:bg-olive-700"
+              >
+                Zobacz
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Footer About -->
-    <footer id="about" class="mt-16 bg-[#f1efe9] text-gray-800 p-12 min-h-[70vh] text-center">
-      <h2 class="text-xl font-bold mb-4">About Fanaberia</h2>
-      <p class="max-w-2xl mx-auto leading-relaxed">
-        We are a small team passionate about delivering beautiful handmade items and art from local creators. Our mission is to create a cozy and delightful experience both in shopping and storytelling.
-      </p>
+    <section class="py-12 bg-[#faf9f5]">
+      <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-bold text-center mb-8">Ulubione</h2>
+        <div class="flex flex-wrap justify-center gap-6">
+          <div
+            v-for="product in favoriteProducts.slice(0, 20)"
+            :key="product.id"
+            class="border p-4 rounded shadow hover:shadow-md cursor-pointer w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5"
+          >
+            <div class="aspect-w-3 aspect-h-4 mb-2 overflow-hidden rounded">
+              <img
+                :src="product.image || '/images/default-product.jpg'"
+                class="w-full h-full object-cover transition-transform duration-300 hover:scale-105 product-image"
+              />
+            </div>
+            <h2 class="font-semibold text-md text-center">
+              {{ product.title }}
+            </h2>
+            <p class="text-sm text-gray-600 text-center">{{ product.price }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer
+      id="about"
+      class="mt-16 bg-[#f1efe9] text-gray-800 p-12 min-h-[30vh] text-center"
+    >
+      <div class="container mx-auto">
+        <h2 class="text-xl font-bold mb-4">O Fanaberii</h2>
+        <p class="max-w-2xl mx-auto leading-relaxed">
+          Jesteśmy małym zespołem pasjonatów tworzenia pięknych, ręcznie robionych
+          przedmiotów i dzieł sztuki od lokalnych twórców. Naszą misją jest
+          tworzenie przytulnego i zachwycającego doświadczenia zarówno podczas
+          zakupów, jak i odkrywania historii naszych produktów.
+        </p>
+      </div>
     </footer>
   </div>
 </template>
@@ -101,32 +152,48 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { marked } from 'marked'
+import './Home.css'
 
 const router = useRouter()
 const currentSlideIndex = ref(0)
 const slides = ref([])
 const categories = ref([])
 const products = ref([])
-const selectedCategory = ref('')
+const favoriteProducts = ref([])
 const page = ref(1)
 const hovering = ref(false)
+const isScrolled = ref(false)
+const headerBgColor = ref('#f7f5ec') // Początkowy kolor tła headera
+const headerOpacity = ref(1) // Początkowa pełna widoczność headera
 let autoInterval = null
 
-const promos = [
-  { image: '/images/soy-candle.png', link: '/blog/first-post' },
-  { image: '/images/soy-candle.png', link: '/product/hand-cream' }
-]
+const promos = ref([
+  {
+    title: 'Świece sojowe',
+    image: '/images/soy-candle.png',
+    link: '/blog/first-post',
+    description: 'Naturalne, ręcznie robione świece sojowe z olejkami eterycznymi.',
+  },
+  {
+    title: 'Krem do rąk',
+    image: '/images/hand-cream.png',
+    link: '/product/hand-cream',
+    description: 'Odżywczy krem do rąk z naturalnymi składnikami.',
+  },
+])
 
 const currentSlide = computed(() => slides.value[currentSlideIndex.value] || {})
 
 const paginatedProducts = computed(() => {
   const filtered = selectedCategory.value
-    ? products.value.filter(p => p.category === selectedCategory.value)
+    ? products.value.filter((p) => p.category === selectedCategory.value)
     : products.value
-  return filtered.slice(0, page.value * 20)
+  return filtered.slice(0, page.value * 12)
 })
 
-const uniqueCategories = computed(() => [...new Set(products.value.map(p => p.category))])
+const uniqueCategories = computed(() => [
+  ...new Set(products.value.map((p) => p.category)),
+])
 const canLoadMore = computed(() => paginatedProducts.value.length < products.value.length)
 
 const goTo = (link) => {
@@ -136,15 +203,18 @@ const goTo = (link) => {
 
 const selectCategory = (cat) => {
   selectedCategory.value = cat
+  page.value = 1
   document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' })
 }
 
 const prevSlide = () => {
-  currentSlideIndex.value = (currentSlideIndex.value - 1 + slides.value.length) % slides.value.length
+  currentSlideIndex.value =
+    (currentSlideIndex.value - 1 + slides.value.length) % slides.value.length
 }
 
 const nextSlide = () => {
-  currentSlideIndex.value = (currentSlideIndex.value + 1) % slides.value.length
+  currentSlideIndex.value =
+    (currentSlideIndex.value + 1) % slides.value.length
 }
 
 watch(hovering, (val) => {
@@ -161,7 +231,22 @@ function startAutoSlide() {
   }, 5000)
 }
 
+const handleScroll = () => {
+  const scrollPosition = window.scrollY
+  const threshold = 100 // Wysokość, po której header zaczyna być przezroczysty
+
+  if (scrollPosition > threshold) {
+    headerBgColor.value = 'rgba(247, 245, 236, 0.7)' // Przezroczyste tło
+    headerOpacity.value = 0.7 // Przezroczystość tekstu
+  } else {
+    headerBgColor.value = '#f7f5ec' // Pełny kolor tła
+    headerOpacity.value = 1 // Pełna widoczność tekstu
+  }
+}
+
 onMounted(async () => {
+  window.addEventListener('scroll', handleScroll)
+
   try {
     const slideFiles = import.meta.glob('/content/slides/*.md', { as: 'raw' })
     for (const path in slideFiles) {
@@ -192,18 +277,31 @@ onMounted(async () => {
     const prodFiles = import.meta.glob('/content/products/*.md', { as: 'raw' })
     for (const path in prodFiles) {
       const raw = await prodFiles[path]()
+      const id = path.split('/').pop().replace('.md', '')
       const title = raw.match(/^---[\s\S]*?title: ['"]?(.+?)['"]?$/m)?.[1]
       const image = raw.match(/^---[\s\S]*?image: ['"]?(.+?)['"]?$/m)?.[1]
       const price = raw.match(/^---[\s\S]*?price: ['"]?(.+?)['"]?$/m)?.[1]
-      const category = raw.match(/^---[\s\S]*?category: ['"]?(.+?)['"]?$/m)?.[1] || 'Other'
+      const category = raw.match(/^---[\s\S]*?category: ['"]?(.+?)['"]?$/m)?.[1] ||
+        'Inne'
+      const favorite = raw.match(/^---[\s\S]*?favorite: (true|false)$/m)?.[1] ===
+        'true'
       if (title) {
         products.value.push({
-          id: path.split('/').pop().replace('.md', ''),
+          id,
           title,
           image,
           price,
-          category
+          category,
+          favorite,
         })
+        if (favorite) {
+          favoriteProducts.value.push({
+            id,
+            title,
+            image,
+            price,
+          })
+        }
       }
     }
   } catch (e) {
@@ -211,21 +309,3 @@ onMounted(async () => {
   }
 })
 </script>
-
-<style scoped>
-.text-olive-800 {
-  color: #556b2f;
-}
-.bg-olive-800 {
-  background-color: #556b2f;
-}
-.bg-olive-700 {
-  background-color: #4a5f2a;
-}
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-</style>

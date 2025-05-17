@@ -1,5 +1,5 @@
 ---
 title: "Slide 2"
-image: "/images/slide2.png"
+image: "/images/gemini_slide2.jpg"
 link: "/product/hand-cream"
 ---
