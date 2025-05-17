@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import ProductDetail from '../view/ProductDetail.vue'
+import ProductDetail from '../views/ProductDetail.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 describe('ProductDetail.vue', () => {
